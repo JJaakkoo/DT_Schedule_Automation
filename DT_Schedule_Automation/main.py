@@ -35,15 +35,17 @@ def main():
     else:
         print(f"Failed to process schedule file: {shifts}, exiting")
         return
+    # Check if there are already shifts in the calendar that are within the date range
     
     # Push shifts to calendar
-    shift_fails = add_shifts_to_calendar(calendar_service, shifts)
+    
+    '''shift_fails = add_shifts_to_calendar(calendar_service, shifts)
     if shift_fails == 0:
         print("Successfully added shifts to calendar!")
     else:
         print(f"Failed to add {shift_fails} shifts to calendar, exiting")
         return
-
+    '''
 
     
 if __name__ == "__main__":
