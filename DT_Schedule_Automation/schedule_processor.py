@@ -83,6 +83,8 @@ def process_schedule_file(file_path,name="jako"):
         
 
         for i, cell in enumerate(df.iloc[:,my_col]):
+            #print(df.iloc[i,0], i)
+
             if "-" in str(cell).lower():
 
                 location, time_bounds = process_time_cell(cell)
@@ -94,7 +96,7 @@ def process_schedule_file(file_path,name="jako"):
                     #print(f"adding :00 to {time_bounds[1]}")
                     time_bounds[1] = time_bounds[1]+":00"
                 try:
-
+                    
                     #print(time_bounds)
                     start_time = f"{datetime.strptime(
                                 start := f"{time_bounds[0]}{get_lower_bound_period(time_bounds[0],time_bounds[1])} {df.iloc[i,0]} {year}", 
@@ -110,6 +112,7 @@ def process_schedule_file(file_path,name="jako"):
 
                     shifts.append({
                         "summary": f"Work at {locations[location]}",
+                        "description": f"Dream Tea Shift. This was added automatically by my schedule script.",
                         "start": {
                             "dateTime": start_time,
                             "timeZone": "America/Edmonton"
@@ -128,12 +131,15 @@ def process_schedule_file(file_path,name="jako"):
         if not added_shifts:  
             return f"Could not find any shifts for {name}"
         
-        return shifts
+        # Range of the given schedule
+        #print(f"\n{df.iloc[1,0]} {df.iloc[i-1,0]}")
+
+        return shifts, f"{df.iloc[1,0]} {year}", f"{df.iloc[i-1,0]} {year}"
     
     except FileNotFoundError:
         print(f"couldnt find the file: {file_path}")
-    #except Exception as e:
-        #print(f"An error occured: {e}")
+    except Exception as e:
+        print(f"An error occured: {e}")
 
 if __name__ == "__main__":
     test_string = "Bobby, Kim, Hyo, Kristen, Chelsey, Jeremy, Sonja, Reane, Yujung, Tricia, Katrina, Jason, Jako, Nick, Alina, Sophia.H, Katelyn, Michael, Jessie, Emily, Phoebe, Terence, Amy, Ervin, Holly, Jacky, Rocky, Gian, Thomas, Sherry, Natalie, Rachel, Cathy".split(", ")
@@ -143,4 +149,4 @@ if __name__ == "__main__":
             process_schedule_file(file_name, name=test_name)
             print("\n")
     else:
-        process_schedule_file(file_name, name="katrina")  
+        process_schedule_file(file_name, name="jako")  

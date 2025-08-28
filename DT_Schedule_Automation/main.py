@@ -8,6 +8,7 @@ from auth import authenticate
 from email_puller import FDprocess
 from schedule_processor import process_schedule_file
 from calendar_pusher import add_shifts_to_calendar
+from calendar_puller import get_existing_events, process_existing_events
 
 def main():
     # Authentication
@@ -28,7 +29,7 @@ def main():
         return
 
     # Process excel file
-    shifts = process_schedule_file(downloaded_file, name="jako")
+    shifts, start, end = process_schedule_file(downloaded_file, name="jako")
     os.remove(downloaded_file)
     if shifts and type(shifts) == list:
         print(f"Success! Processed {len(shifts)} shifts\n")
@@ -36,6 +37,12 @@ def main():
         print(f"Failed to process schedule file: {shifts}, exiting")
         return
     # Check if there are already shifts in the calendar that are within the date range
+    current_events = process_existing_events(get_existing_events(calendar_service, start, end))
+    
+    print("Shifts found in the schedule:")
+    for event in shifts: print(event)
+    print("\nShifts already in calendar:")
+    for event in current_events: print(event)
     
     # Push shifts to calendar
     
@@ -46,7 +53,6 @@ def main():
         print(f"Failed to add {shift_fails} shifts to calendar, exiting")
         return
     '''
-
     
 if __name__ == "__main__":
     main()
