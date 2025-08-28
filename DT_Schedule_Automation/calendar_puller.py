@@ -49,10 +49,10 @@ def get_existing_events(calendar_service, start_date, end_date):
     
 def process_existing_events(events):
     existing_shifts = []
-    print("Pulling existing shifts...")
+    #print("Pulling existing shifts...")
     for event in events:
         if "work" in event.get("summary", "").lower():
-            start = event["start"].get("dateTime", event["start"].get("date"))
+            start = event["start"].get("dateTime", event["start"].get("dateTime"))
             existing_shifts.append(f"{start}: {event.get('summary', 'No Title')}")
     return existing_shifts
     

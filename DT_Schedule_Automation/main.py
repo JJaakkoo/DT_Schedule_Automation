@@ -40,7 +40,7 @@ def main():
     current_events = process_existing_events(get_existing_events(calendar_service, start, end))
     
     print("Shifts found in the schedule:")
-    for event in shifts: print(event)
+    for event in shifts: print(f"{event["start"]["dateTime"]} to {event["end"]["dateTime"]}: {event["summary"]}")
     print("\nShifts already in calendar:")
     for event in current_events: print(event)
     
