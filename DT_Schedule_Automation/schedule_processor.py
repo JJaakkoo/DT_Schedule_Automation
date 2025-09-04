@@ -7,6 +7,26 @@ August 19, 2025
 import pandas as pd
 from datetime import datetime
 
+def shift_sync_instructions(given_shifts, existing_shifts):
+    for day in given_shifts:
+        if given_shifts[day]:
+            pass
+
+def map_shifts (start, end, shifts):
+    mapped_shifts = {
+        "start_date": start,
+        "end_date": end
+    }
+    for i in range(start,end+1):
+        if len(str(i)) == 1:
+            mapped_shifts["0"+str(i)] = None
+        else:
+            mapped_shifts[str(i)] = None
+    for shift in shifts:
+        mapped_shifts[str(shift.split(" ")[0].split("T")[0].split("-")[-1])] = shift
+        
+    return mapped_shifts
+
 def get_lower_bound_period(lower_bound, upper_bound):
     try:
         if type(lower_bound) != int:
@@ -79,6 +99,15 @@ def process_schedule_file(file_path,name="jako"):
         if my_col is None:
             return f"Could not find {name} in the schedule"
 
+        # Finds the range of cells that contains shifts
+        start_row, end_row = None, None
+        for i, cell in enumerate(df.iloc[:,0]):
+            if start_row is None and type(cell) == str:
+                start_row = i
+            elif start_row is not None and type(cell) != str:
+                end_row = i-1
+                break
+
         # processes the individual shifts and puts it into a list
         
 
@@ -134,7 +163,7 @@ def process_schedule_file(file_path,name="jako"):
         # Range of the given schedule
         #print(f"\n{df.iloc[1,0]} {df.iloc[i-1,0]}")
 
-        return shifts, f"{df.iloc[1,0]} {year}", f"{df.iloc[i-1,0]} {year}"
+        return shifts, f"{df.iloc[start_row,0]} {year}", f"{df.iloc[end_row,0]} {year}"
     
     except FileNotFoundError:
         print(f"couldnt find the file: {file_path}")

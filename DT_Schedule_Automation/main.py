@@ -6,9 +6,9 @@ August 14, 2025
 import os
 from auth import authenticate
 from email_puller import FDprocess
-from schedule_processor import process_schedule_file
-from calendar_pusher import add_shifts_to_calendar
-from calendar_puller import get_existing_events, process_existing_events
+from schedule_processor import process_schedule_file, map_shifts
+from calendar_pusher import add_events_to_calendar
+from calendar_puller import get_existing_events, find_existing_shifts
 
 def main():
     # Authentication
@@ -36,17 +36,36 @@ def main():
     else:
         print(f"Failed to process schedule file: {shifts}, exiting")
         return
+
+    print(f"start date: {start}, end date: {end}")
+    start_date = int(start.split(" ")[0])
+    end_date = int(end.split(" ")[0])
+
     # Check if there are already shifts in the calendar that are within the date range
-    current_events = process_existing_events(get_existing_events(calendar_service, start, end))
+    current_shifts = find_existing_shifts(get_existing_events(calendar_service, start, end))
     
-    print("Shifts found in the schedule:")
-    for event in shifts: print(f"{event["start"]["dateTime"]} to {event["end"]["dateTime"]}: {event["summary"]}")
+    #Given shifts
+
+    print("\nShifts found in the given schedule:")
+    given_shifts = []
+    for shift in shifts: 
+        given_shifts.append(f"{shift["start"]["dateTime"]} to {shift["end"]["dateTime"]}: {shift["summary"]}")
+    print("Mapped shifts:")
+    mapped_given_shifts = map_shifts(start_date, end_date, given_shifts)
+    for day in mapped_given_shifts:
+        print(f"{day}: {mapped_given_shifts[day]}")
+
+    # Existing shifts
+
     print("\nShifts already in calendar:")
-    for event in current_events: print(event)
+    print("Mapped shifts:")
+    mapped_current_shifts = map_shifts(start_date, end_date, current_shifts)
+    for day in mapped_current_shifts:
+        print(f"{day}: {mapped_current_shifts[day]}")
     
     # Push shifts to calendar
-    
-    '''shift_fails = add_shifts_to_calendar(calendar_service, shifts)
+    '''
+    shift_fails = add_events_to_calendar(calendar_service, shifts)
     if shift_fails == 0:
         print("Successfully added shifts to calendar!")
     else:

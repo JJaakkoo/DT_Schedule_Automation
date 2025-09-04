@@ -37,7 +37,7 @@ def get_existing_events(calendar_service, start_date, end_date):
             for event in events:
                 start = event["start"].get("dateTime", event["start"].get("date"))
                 print(f"{start}: {event.get('summary', 'No Title')}")
-            print("\n")
+            #print("\n")
 
         #print(start_date)
         #print(end_date)
@@ -47,13 +47,16 @@ def get_existing_events(calendar_service, start_date, end_date):
         print(f"An error occurred: {e}")
         return []
     
-def process_existing_events(events):
+def find_existing_shifts(events):
     existing_shifts = []
     #print("Pulling existing shifts...")
     for event in events:
         if "work" in event.get("summary", "").lower():
-            start = event["start"].get("dateTime", event["start"].get("dateTime"))
-            existing_shifts.append(f"{start}: {event.get('summary', 'No Title')}")
+            start = "-".join(event["start"]["dateTime"].split("-")[:-1])
+            end = "-".join(event["end"]["dateTime"].split("-")[:-1])
+            #start = event["start"].get("dateTime", event["start"].get("dateTime"))
+            #end = event["end"].get("dateTime", event["end"].get("dateTime"))
+            existing_shifts.append(f"{start} to {end}: {event.get('summary', 'No Title')} ({event["id"]})")
     return existing_shifts
     
 if __name__ == "__main__":
