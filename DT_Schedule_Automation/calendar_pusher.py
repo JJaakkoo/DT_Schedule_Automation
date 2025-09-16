@@ -11,6 +11,7 @@ def add_events_to_calendar(calendar_service, events):
     failed_events = 0
 
     for event in events:
+        #print(event)
         print(f"Adding: {event.get('summary', "Unknown Shift")} at {event.get("start", {}).get("dateTime", "Unknown Time")}...")
 
         try:
@@ -24,6 +25,28 @@ def add_events_to_calendar(calendar_service, events):
         except HttpError as error:
             print(f"An error occurred: {error}")
             print("Failed to add shift.")
+            failed_events += 1
+
+    return failed_events
+
+def delete_events_from_calendar(calendar_service, events):
+    print("Deleting events from calendar...")
+
+    failed_events = 0
+
+    for event in events:
+        event_id = event.get("event_id")
+        try:
+            print(f"Deleting event with ID: {event_id}...")
+            calendar_service.events().delete(
+                calendarId='primary',
+                eventId=event_id
+            ).execute()
+            print("Event deleted successfully.")
+
+        except HttpError as error:
+            print(f"An error occurred: {error}")
+            print("Failed to delete event.")
             failed_events += 1
 
     return failed_events

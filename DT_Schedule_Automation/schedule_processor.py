@@ -8,9 +8,70 @@ import pandas as pd
 from datetime import datetime
 
 def shift_sync_instructions(given_shifts, existing_shifts):
-    for day in given_shifts:
-        if given_shifts[day]:
-            pass
+    sync_instructions = []
+    for day in range(given_shifts["start_date"], given_shifts["end_date"]+1):
+        day = str(day)
+        #print(f"{day}: given   : {given_shifts[day]}\n{day}: existing: {existing_shifts[day]}")
+        if given_shifts[day] == None and existing_shifts[day] != None:
+            #print(f"Delete shift on {day}: {existing_shifts[day]}")
+            sync_instructions.append({
+                "instruction": "delete",
+                "event": existing_shifts[day],
+                "event_id": existing_shifts[day].split(" ")[-1][1:-1]
+            })
+        elif given_shifts[day] != None and existing_shifts[day] == None:
+            print(f"Add shift on {day}: {given_shifts[day]}")
+            sync_instructions.append({
+                "instruction": "add",
+                "event": {
+                        "summary": f"{given_shifts[day].split(': ')[-1]}",
+                        "description": f"Dream Tea Shift. This was added automatically by my schedule script.",
+                        "start": {
+                            "dateTime": given_shifts[day].split(" ")[0],
+                            "timeZone": "America/Edmonton"
+                        },
+                        "end": {
+                            "dateTime": given_shifts[day].split(" ")[2][:-1],
+                            "timeZone": "America/Edmonton"
+                        },
+                        "colorId": "11"
+                    }
+            })
+        elif given_shifts[day] != None and existing_shifts[day] != None:
+            if given_shifts[day] not in existing_shifts[day]:
+                print(f"Update shift on {day}: from {existing_shifts[day]} to {given_shifts[day]}")
+                sync_instructions.append({
+                    "instruction": "delete",
+                    "event": existing_shifts[day],
+                    "event_id": existing_shifts[day].split(" ")[-1][1:-1]
+                })
+                sync_instructions.append({
+                    "instruction": "add",
+                    "event": {
+                            "summary": f"{given_shifts[day].split(': ')[-1]}",
+                            "description": f"Dream Tea Shift. This was added automatically by my schedule script.",
+                            "start": {
+                                "dateTime": given_shifts[day].split(" ")[0],
+                                "timeZone": "America/Edmonton"
+                            },
+                            "end": {
+                                "dateTime": given_shifts[day].split(" ")[2][:-1],
+                                "timeZone": "America/Edmonton"
+                            },
+                            "colorId": "11"
+                            }
+                })
+            else:
+                print(f"No change needed for shift on day: {day}")
+                
+        else:
+            
+            print(f"No shift on day: {day}")
+        
+    print("\nSync instructions created: ")
+    for instruction in sync_instructions:
+        print(instruction)
+    return sync_instructions
 
 def map_shifts (start, end, shifts):
     mapped_shifts = {
