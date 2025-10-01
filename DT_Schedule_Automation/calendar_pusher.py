@@ -11,7 +11,7 @@ def add_events_to_calendar(calendar_service, events):
     failed_events = 0
 
     for event in events:
-        #print(event)
+        print(event)
         print(f"Adding: {event.get('summary', "Unknown Shift")} at {event.get("start", {}).get("dateTime", "Unknown Time")}...")
 
         try:

@@ -11,6 +11,8 @@ def shift_sync_instructions(given_shifts, existing_shifts):
     sync_instructions = []
     for day in range(given_shifts["start_date"], given_shifts["end_date"]+1):
         day = str(day)
+        if len(day) == 1:
+            day = "0" + day
         #print(f"{day}: given   : {given_shifts[day]}\n{day}: existing: {existing_shifts[day]}")
         if given_shifts[day] == None and existing_shifts[day] != None:
             #print(f"Delete shift on {day}: {existing_shifts[day]}")
