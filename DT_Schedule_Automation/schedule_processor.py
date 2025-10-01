@@ -71,8 +71,11 @@ def shift_sync_instructions(given_shifts, existing_shifts):
             print(f"No shift on day: {day}")
         
     print("\nSync instructions created: ")
-    for instruction in sync_instructions:
-        print(instruction)
+    if len(sync_instructions) == 0:
+        print("No changes needed, calendar is already up to date!")
+    else:
+        for instruction in sync_instructions:
+            print(instruction)
     return sync_instructions
 
 def map_shifts (start, end, shifts):
