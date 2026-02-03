@@ -224,7 +224,7 @@ def process_schedule_file(file_path,name="jako"):
                 except KeyError:
                     continue
         if not added_shifts:  
-            return f"Could not find any shifts for {name}"
+            return shifts, "", ""
         
         # Range of the given schedule
         #print(f"\n{df.iloc[1,0]} {df.iloc[i-1,0]}")
