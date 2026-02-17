@@ -4,6 +4,7 @@ Jako Zeng
 August 14, 2025
 '''
 import base64
+import time
 
 def FDprocess(gmail_service):
     print("Finding Dream Tea Schedule email...")
@@ -11,7 +12,21 @@ def FDprocess(gmail_service):
 
     # look for email matching the search query
     print(f"Search query: {search_query}")
-    results = gmail_service.users().threads().list(userId="me", q=search_query).execute()
+    tries = 10
+    while tries > 0:
+        try:
+            results = gmail_service.users().threads().list(userId="me", q=search_query).execute()
+            break
+        except TimeoutError as e:
+            print(f"Connection attempt failed ({11-tries}/10): {e}")
+            tries -= 1
+            if tries > 0:
+                time.sleep(3)
+                print("Trying again...")
+            else:
+                print("All 10 attempts failed. Please check your internet connection")
+                return None
+    
     threads = results.get("threads", [])
 
     # did we find any emaisl?
