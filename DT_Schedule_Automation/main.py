@@ -49,7 +49,7 @@ def main():
     print("\nShifts found in the given schedule:")
     given_shifts = []
     for shift in shifts: 
-        given_shifts.append(f"{shift["start"]["dateTime"]} to {shift["end"]["dateTime"]}: {shift["summary"]}")
+        given_shifts.append(f"{shift['start']['dateTime']} to {shift['end']['dateTime']}: {shift['summary']}")
     print("Mapped shifts:")
     mapped_given_shifts = map_shifts(start_date, end_date, given_shifts)
     for day in mapped_given_shifts:
